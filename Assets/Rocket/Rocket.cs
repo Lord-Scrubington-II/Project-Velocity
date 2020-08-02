@@ -5,11 +5,14 @@ using UnityEngine;
 
 public class Rocket : MonoBehaviour
 {
-    public readonly bool debug = true; //debug state
+    [SerializeField] public bool debug = true; //debug state
 
     private Rigidbody collisionMesh;
     private AudioSource thrusterSound;
-    private readonly int thrusterForce = 16;
+
+    [SerializeField] private float mainThrust = 18.0f;
+    [SerializeField] private float rcsThrust = 200.0f;
+    private int fuel = 200;
 
     // Start is called before the first frame update
     void Start()
@@ -21,15 +24,52 @@ public class Rocket : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        ProcessInput();
+        Thrust();
+        Gyrate();
     }
 
-    private void ProcessInput()
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (debug)
+        {
+            print("Rocket collided with " + " " + ".");
+        }
+
+        switch (collision.gameObject.tag)
+        {
+            case "Friendly":
+                //do nothing
+                if (debug)
+                {
+                    print("Rocket hit a friendly object.");
+                }
+
+                break;
+            case "Fuel":
+                //replenish fuel
+                if (debug)
+                {
+                    print("Rocket collected fuelcell.");
+                }
+
+                break;
+            default:
+                //death
+                if (debug)
+                {
+                    print("Rocket collision caused death.");
+                }
+
+                break;
+        }
+    }
+
+    private void Thrust()
     {
         if (Input.GetKey(KeyCode.Space))
         {
             //activate forward thrust
-            collisionMesh.AddRelativeForce(new Vector3(0, thrusterForce, 0), ForceMode.Force);
+            collisionMesh.AddRelativeForce(mainThrust * Vector3.up);
             if (!thrusterSound.isPlaying)
             {
                 thrusterSound.Play();
@@ -43,11 +83,20 @@ public class Rocket : MonoBehaviour
         {
             thrusterSound.Stop();
         }
-        
+    }
+
+    private void Gyrate()
+    {
+        collisionMesh.freezeRotation = true; //all control of rotation is manual.
+
+
+        float rotationThisFrame = rcsThrust * Time.deltaTime;
+
         if (Input.GetKey(KeyCode.A))
         {
             //gyrate left
-            transform.Rotate(Vector3.forward);
+            transform.Rotate(Vector3.forward * rotationThisFrame);
+            
             if (debug)
             {
                 print("Rocket is rotating left.");
@@ -56,11 +105,14 @@ public class Rocket : MonoBehaviour
         else if (Input.GetKey(KeyCode.D))
         {
             //gyrate right
-            transform.Rotate(Vector3.back);
+            transform.Rotate(Vector3.back * rotationThisFrame);
+           
             if (debug)
             {
                 print("Rocket is rotating right.");
             }
         }
+
+        collisionMesh.freezeRotation = false; //resume physics
     }
 }
