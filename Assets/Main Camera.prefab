@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &6265491796347286322
+--- !u!1 &6244563721455802991
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,9 +8,9 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 6265491796347286327}
-  - component: {fileID: 6265491796347286320}
-  - component: {fileID: 6265491796347286321}
+  - component: {fileID: 3981438100625828660}
+  - component: {fileID: 4330333224789832593}
+  - component: {fileID: 5052295168266634195}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -18,27 +18,27 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &6265491796347286327
+--- !u!4 &3981438100625828660
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6265491796347286322}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_GameObject: {fileID: 6244563721455802991}
+  m_LocalRotation: {x: -0.11136441, y: -0, z: -0, w: 0.99377966}
+  m_LocalPosition: {x: 0, y: 2.84, z: -21.11}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!20 &6265491796347286320
+  m_LocalEulerAnglesHint: {x: -12.788001, y: 0, z: 0}
+--- !u!20 &4330333224789832593
 Camera:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6265491796347286322}
+  m_GameObject: {fileID: 6244563721455802991}
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
@@ -75,11 +75,11 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!81 &6265491796347286321
+--- !u!81 &5052295168266634195
 AudioListener:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6265491796347286322}
+  m_GameObject: {fileID: 6244563721455802991}
   m_Enabled: 1

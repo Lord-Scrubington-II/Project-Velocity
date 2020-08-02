@@ -7,13 +7,15 @@ public class Rocket : MonoBehaviour
 {
     public readonly bool debug = true; //debug state
 
-    Rigidbody collisionMesh;
-    private int thrusterForce = 10;
+    private Rigidbody collisionMesh;
+    private AudioSource thrusterSound;
+    private readonly int thrusterForce = 16;
 
     // Start is called before the first frame update
     void Start()
     {
         collisionMesh = this.GetComponent<Rigidbody>();
+        thrusterSound = this.GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -26,18 +28,26 @@ public class Rocket : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.Space))
         {
-            collisionMesh.AddRelativeForce(new Vector3(0, thrusterForce, 0), ForceMode.Force);
             //activate forward thrust
+            collisionMesh.AddRelativeForce(new Vector3(0, thrusterForce, 0), ForceMode.Force);
+            if (!thrusterSound.isPlaying)
+            {
+                thrusterSound.Play();
+            }
             if (debug)
             {
                 print("Rocket is thrusting.");
             }
         }
+        else
+        {
+            thrusterSound.Stop();
+        }
         
         if (Input.GetKey(KeyCode.A))
         {
-            transform.Rotate(Vector3.forward);
             //gyrate left
+            transform.Rotate(Vector3.forward);
             if (debug)
             {
                 print("Rocket is rotating left.");
@@ -45,8 +55,8 @@ public class Rocket : MonoBehaviour
         }
         else if (Input.GetKey(KeyCode.D))
         {
-            transform.Rotate(Vector3.back);
             //gyrate right
+            transform.Rotate(Vector3.back);
             if (debug)
             {
                 print("Rocket is rotating right.");
