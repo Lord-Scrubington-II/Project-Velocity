@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6796098981225846125}
   - component: {fileID: 6184308421516630308}
   - component: {fileID: 3354812729274617475}
-  - component: {fileID: 8389339230853546209}
+  - component: {fileID: 2234079185995503324}
   m_Layer: 0
   m_Name: Booster Cone Port
   m_TagString: Untagged
@@ -80,8 +80,8 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!135 &8389339230853546209
-SphereCollider:
+--- !u!136 &2234079185995503324
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -90,9 +90,10 @@ SphereCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Radius: 0.50000006
+  m_Height: 1.0087701
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.004384866, z: 0}
 --- !u!1 &657754412005957043
 GameObject:
   m_ObjectHideFlags: 0
