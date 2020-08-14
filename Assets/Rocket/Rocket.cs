@@ -3,36 +3,46 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
+using UnityEngine.Experimental.GlobalIllumination;
 using UnityEngine.SceneManagement;
 
 public class Rocket : MonoBehaviour
 {
-    public bool debug = true; //debug state
+    public readonly bool debug = true; //debug state
 
+    //game components
     private Rigidbody rigidBody;
     private AudioSource rocketAudio;
+    private Light spotLight;
 
-    [SerializeField] private float mainThrust = 1000.0f;
-    [SerializeField] private float rcsThrust = 200.0f;
-    [SerializeField] private float levelLoadDelay = 4.0f;
+    [SerializeField] private float mainThrust = 1000.0f; //thrust force vector magnitude
+    [SerializeField] private float rcsThrust = 200.0f; //rotation velocity vector magnitude
+    [SerializeField] private float levelLoadDelay = 4.0f; //what it says on the tin
 
-
+    //fuel and light
     [SerializeField] private bool useFuel = true;
+    [SerializeField] private bool useLight = true;
     [SerializeField] private int fuel = 1500;
+
+    //rocket health and state
     [SerializeField] private int HP = 20;
     [SerializeField] private int damageThreshold = 3;
-    [SerializeField] State state = State.Alive;
+    [SerializeField] private State state = State.Alive;
 
+    //audio resources
     [SerializeField] private AudioClip mainEngine;
     [SerializeField] private AudioClip deathNoise;
     [SerializeField] private AudioClip goalReached;
 
+    //particle aeffects
     [SerializeField] private ParticleSystem mainEngineParticles;
     [SerializeField] private ParticleSystem deathParticles;
     [SerializeField] private ParticleSystem goalReachedParticles;
 
-    private static int nextSceneIndex = 1;
-    private static readonly int sceneCount = 3;
+    private static int sceneCount;
+    private bool useCollisions = true;
+
+    private State Status { get => state; }
 
     enum State { Alive, Dying, Transitioning }
 
@@ -41,6 +51,13 @@ public class Rocket : MonoBehaviour
     {
         rigidBody = this.GetComponent<Rigidbody>();
         rocketAudio = this.GetComponent<AudioSource>();
+        spotLight = this.GetComponent<Light>();
+        sceneCount = SceneManager.sceneCountInBuildSettings;
+        //not working for some reason.
+        if (!useLight)
+        {
+            spotLight.intensity = 0;
+        }
     }
 
     // Update is called once per frame
@@ -57,6 +74,33 @@ public class Rocket : MonoBehaviour
         {
             //stop physics engine from controlling rocket after target reached.
             rigidBody.freezeRotation = true;
+        }
+
+        /*
+        if(rigidBody.rotation.x >= 2 || rigidBody.rotation.y >= 2)
+        {
+            Kill();
+        }*/
+
+        //access debug menu when debug mode is on
+        if (debug)
+        {
+            HandleDebugMenu();
+        }
+    }
+
+    private void HandleDebugMenu()
+    {
+        if (Input.GetKeyDown(KeyCode.L)) //instant advancement
+        {
+            LoadNextLevel();
+            print("Debug option: developer advanced to next level.");
+        }
+
+        if (Input.GetKeyDown(KeyCode.C)) //collision toggle
+        {
+            useCollisions = !useCollisions;
+            print("Debug option: collisions toggled to " + useCollisions);
         }
     }
 
@@ -79,7 +123,8 @@ public class Rocket : MonoBehaviour
                     print("Rocket hit a friendly object.");
                 }
                 break;
-
+            
+            //todo consider removal
             case "Fuel":
                 //replenish fuel
                 if (debug)
@@ -91,54 +136,68 @@ public class Rocket : MonoBehaviour
 
             case "Target":
                 //next level!
-                if (debug)
-                {
-                    print("Rocket landed!");
-                }
-                state = State.Transitioning;
-                Invoke("LoadNextLevel", levelLoadDelay);
-                HandleAudioEvent(goalReached);
-                ClearParticles();
-                goalReachedParticles.Play();
+                Transition();
                 break;
 
             default:
                 //calc damage
-                if (CalcDamage(collision))
+                if (CalcDamage(collision) && useCollisions)
                 {
                     //death
-                    state = State.Dying;
-                    Invoke("Restart", levelLoadDelay);
-                    HandleAudioEvent(deathNoise);
-                    ClearParticles();
-                    deathParticles.Play();
+                    Kill();
                 }
                 break;
         }
     }
-    
+
+    private void Transition()
+    {
+        if (debug)
+        {
+            print("Rocket landed!");
+        }
+        state = State.Transitioning;
+        Invoke("LoadNextLevel", levelLoadDelay);
+        HandleAudioEvent(goalReached);
+        ClearParticles();
+        goalReachedParticles.Play();
+    }
+
+    private void Kill()
+    {
+        state = State.Dying;
+        Invoke("Restart", levelLoadDelay);
+        HandleAudioEvent(deathNoise);
+        ClearParticles();
+        deathParticles.Play();
+    }
+
     private void LoadNextLevel()
     {
-        SceneManager.LoadScene(nextSceneIndex);
-        
-        if(nextSceneIndex < sceneCount)
+        int nextSceneIndex = SceneManager.GetActiveScene().buildIndex + 1;
+
+        if (nextSceneIndex < sceneCount)
         {
-            nextSceneIndex++;
+            SceneManager.LoadScene(nextSceneIndex);
+        }
+        else
+        {
+            Restart();
         }
     }
     private void Restart()
     {
         SceneManager.LoadScene(0);
-        nextSceneIndex = 1;
     }
 
     private bool CalcDamage(Collision collision)
     {
         //todo test this!
 
-        //get rocket's relative velocity on collision with generic obstacles.
+        //get impulse applied to rocket on collision with generic obstacles.
         int velocity = (int)Math.Floor(collision.relativeVelocity.magnitude);
-        
+        //int impulse = (int)Math.Floor(collision.impulse.magnitude);
+
         //rocket go boom?
         bool death = false;
 
@@ -181,7 +240,7 @@ public class Rocket : MonoBehaviour
     private void DoThrust()
     {
         //activate forward thrust
-        rigidBody.AddRelativeForce(mainThrust * Vector3.up * Time.deltaTime);
+        rigidBody.AddRelativeForce(mainThrust * Vector3.up * Time.deltaTime); //ensure that impulse is FPS-agnostic
         if (useFuel)
         {
             fuel--;
