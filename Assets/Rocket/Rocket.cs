@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 
 public class Rocket : MonoBehaviour
 {
-    public readonly bool debug = true; //debug state
+    public readonly bool debug = false; //debug state
 
     //game components
     private Rigidbody rigidBody;
@@ -73,7 +73,7 @@ public class Rocket : MonoBehaviour
         if(state == State.Transitioning)
         {
             //stop physics engine from controlling rocket after target reached.
-            rigidBody.freezeRotation = true;
+            rigidBody.angularVelocity = Vector3.zero;
         }
 
         /*
@@ -265,14 +265,11 @@ public class Rocket : MonoBehaviour
 
     private void HandleGyration()
     {
-        rigidBody.freezeRotation = true; //all control of rotation is manual.
-
+        rigidBody.angularVelocity = Vector3.zero; //all control of rotation is manual.
 
         float rotationThisFrame = rcsThrust * Time.deltaTime; //ensure that RPM is always same.
 
         Gyrate(rotationThisFrame);
-
-        rigidBody.freezeRotation = false; //resume physics
     }
 
     private void Gyrate(float rotationThisFrame)
