@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 
 public class Rocket : MonoBehaviour
 {
-    public readonly bool debug = false; //debug state
+    public readonly bool debug = true; //debug state
 
     //game components
     private Rigidbody rigidBody;
