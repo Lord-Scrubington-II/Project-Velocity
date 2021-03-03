@@ -1,4 +1,3 @@
 # Project-Velocity
-<p>Unity Engine - Project Velocity</p>
 
-<p>A game about piloting a rocket around obstacles.</p>
+<p>A game about piloting a rocket around obstacles. Made with Unity Game Engine.</p>
